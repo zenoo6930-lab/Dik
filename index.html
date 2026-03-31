@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>For Diksha 💖</title>
+
+<style>
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  overflow:hidden;
+  background: linear-gradient(135deg,#ff6fa5,#ffc0cb,#ffe4ec);
+  color:white;
+  text-align:center;
+}
+
+/* background stars */
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:-2;
+}
+
+/* floating hearts */
+.heart{
+  position:absolute;
+  font-size:18px;
+  animation:floatUp 6s linear infinite;
+  opacity:0.8;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
+/* screens */
+.screen{
+  display:none;
+  height:100vh;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+.active{display:flex;}
+
+/* glass card */
+.card{
+  padding:25px;
+  border-radius:25px;
+  background:rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  cursor:pointer;
+}
+
+/* button */
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:20px;
+  background:white;
+  color:#ff4d88;
+  font-weight:bold;
+  margin-top:20px;
+}
+
+/* balloons */
+.balloon{
+  position:absolute;
+  bottom:-120px;
+  width:55px;
+  height:70px;
+  border-radius:50%;
+  animation:rise 6s linear forwards;
+}
+
+@keyframes rise{
+  to{transform:translateY(-120vh);}
+}
+
+/* text */
+h1{
+  font-size:32px;
+  letter-spacing:2px;
+  text-shadow:0 5px 20px rgba(0,0,0,0.3);
+}
+
+p{
+  font-size:18px;
+  opacity:0.9;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- 💌 -->
+<div id="s0" class="screen active">
+  <div class="card" onclick="start()">
+    💌 Tap for a Surprise
+  </div>
+</div>
+
+<!-- ⏳ -->
+<div id="s1" class="screen">
+  <h1 id="count">3</h1>
+  <p>Wait for it... 💖</p>
+</div>
+
+<!-- 💖 message -->
+<div id="s2" class="screen">
+  <h1 id="msg"></h1>
+  <button onclick="startGame()">One more thing 🎀</button>
+</div>
+
+<!-- 🎮 -->
+<div id="s3" class="screen">
+  <h1>Pop the balloons 🎈</h1>
+  <p id="score">0/10</p>
+</div>
+
+<!-- 🎉 final -->
+<div id="s4" class="screen">
+  <h1>🎉 HAPPY BIRTHDAY DIKSHA 🎂</h1>
+  <p>You are the best person 💖✨</p>
+</div>
+
+<script>
+
+/* 🌟 stars */
+let c=document.getElementById("bg");
+let ctx=c.getContext("2d");
+c.width=innerWidth;
+c.height=innerHeight;
+
+let stars=[];
+for(let i=0;i<100;i++){
+  stars.push({x:Math.random()*c.width,y:Math.random()*c.height});
+}
+
+function animate(){
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle="white";
+  stars.forEach(s=>{
+    ctx.fillRect(s.x,s.y,2,2);
+    s.y+=0.3;
+    if(s.y>c.height) s.y=0;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* 💖 floating hearts */
+setInterval(()=>{
+  let h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="💖";
+  h.style.left=Math.random()*100+"vw";
+  document.body.appendChild(h);
+
+  setTimeout(()=>h.remove(),6000);
+},500);
+
+/* screen switch */
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* start */
+function start(){
+  show("s1");
+  let c=3;
+
+  let t=setInterval(()=>{
+    c--;
+    document.getElementById("count").innerText=c;
+
+    if(c===0){
+      clearInterval(t);
+      show("s2");
+      type();
+    }
+  },1000);
+}
+
+/* typing */
+let text="You are the best person 💖";
+let i=0;
+
+function type(){
+  let t=setInterval(()=>{
+    document.getElementById("msg").innerHTML+=text[i];
+    i++;
+    if(i>=text.length) clearInterval(t);
+  },50);
+}
+
+/* 🎮 game */
+let score=0;
+let target=10;
+
+function startGame(){
+  show("s3");
+
+  let loop=setInterval(()=>{
+    let b=document.createElement("div");
+    b.className="balloon";
+
+    b.style.left=Math.random()*90+"vw";
+    b.style.background=
+      ["#ff4d88","#ff85a2","#ffc0cb"][Math.floor(Math.random()*3)];
+
+    document.body.appendChild(b);
+
+    function pop(){
+      b.remove();
+      score++;
+      document.getElementById("score").innerText=score+"/"+target;
+
+      if(score===target){
+        clearInterval(loop);
+        final();
+      }
+    }
+
+    b.addEventListener("click",pop);
+    b.addEventListener("touchstart",pop);
+
+    setTimeout(()=>b.remove(),6000);
+
+  },600);
+}
+
+/* 🎉 final */
+function final(){
+  show("s4");
+
+  for(let i=0;i<40;i++){
+    let b=document.createElement("div");
+    b.className="balloon";
+    b.style.left=Math.random()*100+"vw";
+    b.style.background=
+      ["#ff4d88","#ff99cc","#ffd1dc","#ff66a3"][Math.floor(Math.random()*4)];
+    document.body.appendChild(b);
+  }
+
+  new Audio("https://www.myinstants.com/media/sounds/tada-fanfare.mp3").play();
+}
+
+</script>
+
+</body>
+</html>
